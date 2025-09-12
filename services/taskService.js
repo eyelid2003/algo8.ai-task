@@ -1,18 +1,16 @@
 const Task = require('../models/Task');
 
-// Create a new task
 const createTask = async (taskData) => {
   try {
     const newTask = new Task(taskData);
     return await newTask.save();
   } catch (error) {
-    // Log the error and re-throw to allow the calling function to handle it.
+  
     console.error('Error creating task:', error);
     throw error;
   }
 };
 
-// Get all tasks of a user with filters
 const getUserTasks = async (userId, query) => {
   const { status, page = 1, limit = 10 } = query;
   const filter = { user: userId, isDeleted: false };
@@ -27,7 +25,6 @@ const getUserTasks = async (userId, query) => {
     .sort({ createdAt: -1 });
 };
 
-// Search tasks by keyword
 const searchUserTasks = async (userId, keyword) => {
   const filter = {
     user: userId,
@@ -37,7 +34,6 @@ const searchUserTasks = async (userId, keyword) => {
   return await Task.find(filter);
 };
 
-// Get a task by ID
 const getTaskById = async (taskId, userId) => {
   const task = await Task.findOne({
     _id: taskId,
@@ -50,9 +46,8 @@ const getTaskById = async (taskId, userId) => {
   return task;
 };
 
-// Soft delete a task
 const deleteTaskById = async (taskId, userId) => {
-  // Use findOneAndUpdate directly to update and return the document in one operation
+
   const updatedTask = await Task.findOneAndUpdate(
     { _id: taskId, user: userId, isDeleted: false },
     { isDeleted: true },
@@ -66,7 +61,6 @@ const deleteTaskById = async (taskId, userId) => {
   return updatedTask;
 };
 
-// Update a task
 const updateTaskById = async (taskId, userId, updateData) => {
   const updatedTask = await Task.findOneAndUpdate(
     { _id: taskId, user: userId, isDeleted: false },

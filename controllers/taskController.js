@@ -3,7 +3,6 @@ const { validationResult } = require('express-validator');
 const mongoose = require('mongoose');
 const Task = require('../models/Task');
 
-// CREATE TASK
 const createTask = asyncHandler(async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -12,27 +11,23 @@ const createTask = asyncHandler(async (req, res) => {
 
     const { title, description, status } = req.body;
     
-    // The auth middleware already ensures req.user.id is valid and exists.
-    // The schema validation also handles ObjectId casting.
-    
     const task = new Task({
         title,
         description,
         status: status || 'pending',
-        user: req.user.id // Direct assignment; Mongoose handles the casting.
+        user: req.user.id 
     });
 
     await task.save();
     res.status(201).json({ success: true, task });
 });
 
-// GET ALL TASKS OF LOGGED-IN USER
+
 const getTasks = asyncHandler(async (req, res) => {
     const tasks = await Task.find({ user: req.user.id, isDeleted: false }).sort({ createdAt: -1 });
     res.status(200).json({ success: true, tasks });
 });
 
-// UPDATE TASK
 const updateTask = asyncHandler(async (req, res) => {
     const taskId = req.params.id;
     const { title, description, status } = req.body;
@@ -40,7 +35,7 @@ const updateTask = asyncHandler(async (req, res) => {
     const updatedTask = await Task.findOneAndUpdate(
         { _id: taskId, user: req.user.id, isDeleted: false },
         { title, description, status },
-        { new: true, runValidators: true } // 'new: true' returns the updated doc; 'runValidators' ensures schema validation.
+        { new: true, runValidators: true } 
     );
 
     if (!updatedTask) {
@@ -50,7 +45,6 @@ const updateTask = asyncHandler(async (req, res) => {
     res.status(200).json({ success: true, task: updatedTask });
 });
 
-// DELETE TASK (SOFT DELETE)
 const deleteTask = asyncHandler(async (req, res) => {
     const taskId = req.params.id;
 
@@ -67,7 +61,6 @@ const deleteTask = asyncHandler(async (req, res) => {
     res.status(200).json({ success: true, msg: "Task deleted successfully" });
 });
 
-// SEARCH TASKS (BY TITLE OR STATUS)
 const searchTasks = asyncHandler(async (req, res) => {
     const { q } = req.query;
 
