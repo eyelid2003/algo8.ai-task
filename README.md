@@ -1,3 +1,4 @@
+//Palak Dixit
 Task Manager Backend API
 
 This is a secure backend system built to handle user authentication and task management. It uses Node.js with Express for the server, MySQL for storing user information, and MongoDB to manage tasks efficiently.
